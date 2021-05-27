@@ -16,16 +16,9 @@ macro_rules! index_type {
 }
 
 index_type!(Point);
-index_type!(Variable);
-
-#[derive(Ord, PartialOrd, Eq, PartialEq, Clone, Copy, Debug, Hash)]
-pub(crate) struct Field {
-    pub v: Variable,
-    pub f: char,
-}
 
 #[derive(Ord, PartialOrd, Eq, PartialEq, Clone, Copy, Debug, Hash)]
 pub(crate) enum Variable_or_field {
-    variable(Variable),
-    field(Field),
+    variable(char),
+    field(Point,char),
 }
