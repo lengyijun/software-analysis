@@ -43,7 +43,9 @@ fn main() {
     let pt = iteration.variable::<(Variable_or_field, Point)>("pt");
     pt.extend(new.iter());
 
-    let edge = iteration.variable::<(Variable_or_field, Point)>("edge");
+    let edge = iteration.variable::<(Variable_or_field, Variable_or_field)>("edge");
+    edge.extend(assign.iter());
+
     // temp1
     let t1=iteration.variable::<(Variable_or_field,(Point,char))>("t1");
     // temp2
@@ -60,14 +62,22 @@ fn main() {
         // pt(oi.f,oj) :- t1(y,(oi,f)), pt(y,oj).
         pt.from_join(&t1,&pt,|&_y,&(oi,f),&oj| (Variable_or_field::field(oi,f),oj));
 
+        edge.from_join(&pt,&store,|&_x,&o,&(f,y)| (y,Variable_or_field::field(o,f)));
+
         // t2((oi,f),y) :- pt(oi,x),y=x.f.
         t2.from_leapjoin(&pt,load.extend_with(|&(x,_p)|x),|&(_x,p),&(f,y)| (Variable_or_field::field(p,f),y));
 
         // pt(y,oj):- t2((oi,f),y),pt((oi,f),oj).
         pt.from_join(&t2,&pt,|&_z,&y,&oj|(y,oj));
+
+        edge.from_join(&pt,&load,|&_x,&o,&(f,y)|(Variable_or_field::field(o,f),y));
     }
 
     let x = pt.complete();
     println!("{}", x.elements.len());
     println!("{:?}", x.elements);
+
+    let e=edge.complete();
+    println!("{}", e.elements.len());
+    println!("{:?}", e.elements);
 }
