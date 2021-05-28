@@ -53,8 +53,8 @@ fn main() {
 
     while iteration.changed() {
 
-        // pt(x,oi):- pt(y,oi), x=y.
-        pt.from_leapjoin(&pt, assign.extend_with(|&(v, p)| v), |&(_, p), &v| (v, p));
+        // pt(x,oi):- pt(y,oi), edge(y,x)).
+        pt.from_join(&pt,&edge,|&_y,&o,&x|(x,o));
 
         // t1(p1,f,y) :- pt(pi,x) , x=f.y.
         t1.from_leapjoin(&pt,store.extend_with(|&(x,p)| x),|&(x,p),&(c,y)|(y,(p,c)) );
