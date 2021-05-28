@@ -34,8 +34,8 @@ fn main() {
     .collect();
 
     // line 7: e=d.f;
-    let load: Relation<(Variable_or_field, Variable_or_field,char)> = vec![
-        (Variable_or_field::variable('e'),Variable_or_field::variable('d'),'f')
+    let load: Relation<( Variable_or_field,(char,Variable_or_field))> = vec![
+        (Variable_or_field::variable('d'),('f',Variable_or_field::variable('e')))
     ]
     .iter()
     .collect();
@@ -46,6 +46,8 @@ fn main() {
     let edge = iteration.variable::<(Variable_or_field, Point)>("edge");
     // temp1
     let t1=iteration.variable::<(Variable_or_field,(Point,char))>("t1");
+    // temp2
+    let t2=iteration.variable::<(Variable_or_field,Variable_or_field)>("t2");
 
     while iteration.changed() {
 
@@ -57,6 +59,12 @@ fn main() {
 
         // pt(oi.f,oj) :- t1(y,(oi,f)), pt(y,oj).
         pt.from_join(&t1,&pt,|&_y,&(oi,f),&oj| (Variable_or_field::field(oi,f),oj));
+
+        // t2((oi,f),y) :- pt(oi,x),y=x.f.
+        t2.from_leapjoin(&pt,load.extend_with(|&(x,_p)|x),|&(_x,p),&(f,y)| (Variable_or_field::field(p,f),y));
+
+        // pt(y,oj):- t2((oi,f),y),pt((oi,f),oj).
+        pt.from_join(&t2,&pt,|&_z,&y,&oj|(y,oj));
     }
 
     let x = pt.complete();

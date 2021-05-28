@@ -22,3 +22,4 @@ pub(crate) enum Variable_or_field {
     variable(char),
     field(Point,char),
 }
+
