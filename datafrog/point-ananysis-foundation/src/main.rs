@@ -81,3 +81,21 @@ fn main() {
     println!("{}", e.elements.len());
     println!("{:?}", e.elements);
 }
+
+// b=new C();
+// a=b;
+// c=new C();
+// c.f=a;
+// d=c;
+// c.f=d;
+// e=d.f
+//
+//                          {o1}     {o1}
+//                     |-----a <------b
+// {o1,o3}  {o1,o3}    |
+// e  <----- o3.f <----|
+//                     |
+//                     |-----d <------c
+//                          {o3}     {o3}
+// 
+
